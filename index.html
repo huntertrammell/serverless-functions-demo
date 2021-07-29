@@ -24,11 +24,26 @@
             const displayDiv = document.getElementById('results');
             const query = document.getElementById('query')
             // On submit record value and output to the console
-            form.addEventListener('submit', e => {
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 // Grab search query
                 let search = query.value.trim();
-                console.log('search')
+                // Fetch API data
+                const {data} = await fetch('/.netlify/functions/rick_and_morty',{
+                    method: 'POST',
+                    body: JSON.stringify({
+                        query: search
+                    })
+                }).then(res => res.json())
+                
+                // Map through our API response and append to our display div
+                let results = data.map(result => {
+                    let p = document.createElement('p');
+                    p.textContent = `${result.name} - ${result.species}`;
+                    return p
+                })
+                displayDiv.append(...results)
+
             })
         })
     </script>
